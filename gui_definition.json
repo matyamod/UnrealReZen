@@ -1,0 +1,75 @@
+{
+    "minimum_required": "0.8.0",
+    "gui": {
+        "window_name": "UnrealReZen",
+        "command": "UnrealReZen.exe -g %gamedir% -c %content% -o %out% -e GAME_UE4_26 --compression-format %format% %mount%",
+        "show_last_line": true,
+        "button": "Repack",
+        "components": [
+            {
+                "type": "folder",
+                "label": "Path to the game directory (for loading UCAS and UTOC)",
+                "id": "gamedir",
+                "placeholder": "Drop a folder here",
+                "add_quotes": true,
+                "validator": {
+                    "exist": true
+                }
+            },
+            {
+                "type": "folder",
+                "label": "Path of the content that you want to pack",
+                "id": "content",
+                "placeholder": "Drop a folder here",
+                "add_quotes": true,
+                "validator": {
+                    "exist": true
+                }
+            },
+            {
+                "type": "text",
+                "label": "Path (including file name) for the packed utoc file",
+                "id": "out",
+                "add_quotes": true,
+                "placeholder": "*_P.utoc",
+                "validator": {
+                    "wildcard": "*.utoc",
+                    "wildcard_error": "Output path should be *.utoc file"
+                }
+            },
+            {
+                "type": "combo",
+                "label": "Compression format (Oodle is recommended)",
+                "id": "format",
+                "items": [
+                    { "label": "Zlib" },
+                    { "label": "Oodle" },
+                    { "label": "LZ4" },
+                    { "label": "None" }
+                ],
+                "default": 1
+            },
+            {
+                "type": "text",
+                "label": "Mount point of packed archive (Default: ../../../)",
+                "id": "mount",
+                "placeholder": "e.g. ../../../End/Content",
+                "optional": true,
+                "prefix": " --mount-point ",
+                "default": "../../../End/Content/"
+            }
+        ]
+    },
+    "help": [
+        {
+            "type": "url",
+            "label": "README",
+            "url": "https://github.com/rm-NoobInCoding/UnrealReZen"
+        },
+        {
+            "type": "url",
+            "label": "About Tuw (GUI wrapper)",
+            "url": "https://github.com/matyalatte/tuw"
+        }
+    ]
+}
