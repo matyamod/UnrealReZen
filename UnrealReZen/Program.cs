@@ -85,10 +85,19 @@ namespace UnrealReZen
                 return;
             }
 
+            // Fix mount point
+            opts.MountPoint = opts.MountPoint.Replace("\\", "/");
+            if (!opts.MountPoint.EndsWith('/'))
+            {
+                opts.MountPoint += "/";
+            }
+
             Console.WriteLine($"Game Directory: {opts.GameDirectory}");
             Console.WriteLine($"Content Path: {opts.ContentPath}");
             Console.WriteLine($"Unreal Engine Version: {engineVersion}");
             Console.WriteLine($"Output Path: {opts.OutputPath}");
+            Console.WriteLine($"Compression Format: {opts.CompressionFormat}");
+            Console.WriteLine($"Mount Point: {opts.MountPoint}");
 
             var aesKey = new FAesKey(opts.AESKey ?? Constants.DefaultAES);
             DefaultFileProvider provider;
@@ -124,7 +133,8 @@ namespace UnrealReZen
             {
                 string filename = file.Replace(opts.ContentPath + "\\", "").Replace("\\", "/");
                 Log.Information("Mounting " + Path.GetFileName(filename));
-                var filedata = provider.Files.Values.Where(a => a.Path.Equals(filename, StringComparison.CurrentCultureIgnoreCase));
+                string fullname = (Path.Combine(opts.MountPoint, filename)).Replace("\\", "/").Replace("../../../", "");
+                var filedata = provider.Files.Values.Where(a => a.Path.Equals(fullname, StringComparison.CurrentCultureIgnoreCase));
                 if (filedata == null || !filedata.Any())
                 {
                     Log.Warning("Error! Cannot find file " + filename + " in archives.");

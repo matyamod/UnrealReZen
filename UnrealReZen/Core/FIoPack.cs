@@ -41,7 +41,7 @@ namespace UnrealReZen.Core
                 fdata.Add(newEntry);
             }
 
-            fdata.PackFilesToUcas(m, dir, outFilename, compression, depver);
+            fdata.PackFilesToUcas(m, dir, outFilename, compression, mountPoint, depver);
 
             if (aes.KeyString != Constants.DefaultAES)
             {
@@ -56,7 +56,7 @@ namespace UnrealReZen.Core
             return fdata.Count;
         }
 
-        public static void PackFilesToUcas(this List<AssetMetadata> files, Dependency m, string dir, string outFilename, string compression, FIoDependencyFormat depver)
+        public static void PackFilesToUcas(this List<AssetMetadata> files, Dependency m, string dir, string outFilename, string compression, string mountPoint, FIoDependencyFormat depver)
         {
 
             var subsetDependencies = new Dictionary<ulong, FFilePackageStoreEntry>();
@@ -82,7 +82,9 @@ namespace UnrealReZen.Core
             {
                 MemoryMappedFile mmf;
                 long SizeOfmmf;
-                string pathToread = Path.Combine(dir.Replace("/", "\\"), files[i].FilePath.Replace("/", "\\"));
+                string relativePath = Path.Combine("../../../", files[i].FilePath).Replace("\\", "/").Replace(mountPoint, "").Replace("../../../", "");
+                string pathToread = Path.Combine(dir.Replace("/", "\\"), relativePath.Replace("/", "\\"));
+
                 if (!File.Exists(pathToread))
                 {
                     if (files[i].FilePath != Constants.DepFileName) throw new Exception("File doesn't exist, and also its not the dependency file.");
