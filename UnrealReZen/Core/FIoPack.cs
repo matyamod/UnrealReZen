@@ -142,6 +142,11 @@ namespace UnrealReZen.Core
                 }
                 mmf.Dispose();
             }
+
+            // Note: FF7R2 crashes when it succeed in reading the dummy manifest file
+            //       So, we intentionally break the first byte to let the game ignore it.
+            f.Seek(0, 0);
+            f.Write([0]);
         }
 
         public static byte[] DeparseDirectoryIndex(List<AssetMetadata> files)
