@@ -1,4 +1,8 @@
 # UnrealReZen
+
+> [!WARNING]
+> This custom branch is for FF7R2. It may not work for other games.
+
 ![GitHub Stars](https://img.shields.io/github/stars/rm-NoobInCoding/UnrealUnZen) ![GitHub Forks](https://img.shields.io/github/forks/rm-NoobInCoding/UnrealUnZen) [![build and test](https://github.com/rm-NoobInCoding/UnrealUnZen/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/rm-NoobInCoding/UnrealUnZen/actions/workflows/dotnet-desktop.yml) [![Github All Releases](https://img.shields.io/github/downloads/rm-NoobInCoding/UnrealUnZen/total.svg)]()
 
 A tool for creating and packing Unreal Engine .Utoc and .Ucas files.
