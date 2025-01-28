@@ -1,36 +1,85 @@
 name: build and test
 
 on:
-  pull_request:
-    branches: [ master ]
-    paths:
-    - '**.cs'
-    - '**.csproj'
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '3.1.x' # The .NET SDK version to use
+  DOTNET_VERSION: '8.0.x' # The .NET SDK version to use
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.check-tag.outputs.tag }}
+
+    steps:
+      - name: Check tag
+        id: check-tag
+        run: |
+          if [[ ${{ github.ref }} == refs/tags/v* ]]; then
+            TAG=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
+          else
+            TAG=$(echo ${{ github.sha }} | cut -c1-7)
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - uses: actions/checkout@v4
+
+      - name: Create Release Draft
+        id: create-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.check-tag.outputs.tag }}
+          name: ${{ steps.check-tag.outputs.tag }}
+          body: |
+            ## Changelog
+
+            - First Change
+            - Second Change
+          draft: true
+          prerelease: false
+
   build-and-test:
 
-    name: build-and-test-${{matrix.os}}
+    name: release-${{matrix.os}}
+    needs: setup
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-latest]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install dependencies
-      run: nuget restore UnrealUnZen/packages.config -PackagesDirectory Packages
-      
-    - name: Build
-      run: dotnet build --configuration Release
-    
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet publish -r win-x64 -p:PublishSingleFile=true --self-contained false
+
+      - name: Test
+        run: |
+          mv UnrealReZen/bin/Release/net8.0/win-x64/publish .
+          ls
+          cd publish
+          ls
+        shell: bash
+
+      - name: Archive release for Windows
+        run: |
+          cd publish
+          powershell Compress-Archive -Force -Path * -Destination ../UnrealReZen_ff7r2_${{ needs.setup.outputs.tag }}.zip
+
+      - name: Upload Release Asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.setup.outputs.tag }} UnrealReZen_ff7r2_${{ needs.setup.outputs.tag }}.zip
