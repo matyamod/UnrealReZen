@@ -74,6 +74,7 @@ jobs:
       - name: Copy files
         run: |
           mv UnrealReZen/bin/Release/net8.0/win-x64/publish .
+          cp LICENSE publish
           cp gui_definition.json publish
           cp Tuw-v${{ env.TUW_VERSION }}-Windows10-x64/Tuw.exe publish/GUI.exe
         shell: bash
