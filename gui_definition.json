@@ -2,7 +2,7 @@
     "minimum_required": "0.8.0",
     "gui": {
         "window_name": "UnrealReZen",
-        "command": "UnrealReZen.exe -g %gamedir% -c %content% -o \"%outdir%\\%utoc%.utoc\" -e GAME_UE4_26 --compression-format %format% %mount%",
+        "command": "UnrealReZen.exe -g %gamedir% -c %content% -o \"%outdir%\\%utoc%.utoc\" -e GAME_UE4_26 --compression-format %format%%mount%%toponly%",
         "show_last_line": true,
         "button": "Repack",
         "components": [
@@ -65,6 +65,14 @@
                 "optional": true,
                 "prefix": " --mount-point ",
                 "default": "../../../End/Content/"
+            },
+            {
+                "type": "check",
+                "label": "Non-recursive search in the game directory",
+                "id": "toponly",
+                "value": " --game-dir-top-only",
+                "default": true,
+                "tooltip": "When true, UnrealReZen ignores the \"~mods\" folder."
             }
         ]
     },
