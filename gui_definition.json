@@ -2,7 +2,7 @@
     "minimum_required": "0.8.0",
     "gui": {
         "window_name": "UnrealReZen",
-        "command": "UnrealReZen.exe -g %gamedir% -c %content% -o %out% -e GAME_UE4_26 --compression-format %format% %mount%",
+        "command": "UnrealReZen.exe -g %gamedir% -c %content% -o \"%outdir%\\%utoc%.utoc\" -e GAME_UE4_26 --compression-format %format% %mount%",
         "show_last_line": true,
         "button": "Repack",
         "components": [
@@ -10,7 +10,7 @@
                 "type": "folder",
                 "label": "Path to the game directory (for loading UCAS and UTOC)",
                 "id": "gamedir",
-                "placeholder": "Drop a folder here",
+                "placeholder": "Drop a folder here (e.g. YourGame\\End\\Content\\Paks)",
                 "add_quotes": true,
                 "validator": {
                     "exist": true
@@ -27,14 +27,22 @@
                 }
             },
             {
-                "type": "text",
-                "label": "Path (including file name) for the packed utoc file",
-                "id": "out",
-                "add_quotes": true,
-                "placeholder": "*_P.utoc",
+                "type": "folder",
+                "label": "Output directory",
+                "id": "outdir",
+                "placeholder": "Drop a folder here",
                 "validator": {
-                    "wildcard": "*.utoc",
-                    "wildcard_error": "Output path should be *.utoc file"
+                    "exist": true
+                }
+            },
+            {
+                "type": "text",
+                "label": "Package name",
+                "id": "utoc",
+                "placeholder": "e.g. MyMod_P",
+                "validator": {
+                    "regex": ".*_p|.*_P",
+                    "regex_error": "Package name should end with \"_P\""
                 }
             },
             {
