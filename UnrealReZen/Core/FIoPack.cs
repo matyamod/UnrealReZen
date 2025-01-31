@@ -80,6 +80,8 @@ namespace UnrealReZen.Core
             using var f = File.Create(Path.ChangeExtension(outFilename, ".ucas"));
             for (int i = 0; i < files.Count; i++)
             {
+                WriteProgressBar(i, files.Count - 1);
+
                 MemoryMappedFile mmf;
                 long SizeOfmmf;
                 string relativePath = Path.Combine("../../../", files[i].FilePath).Replace("\\", "/").Replace(mountPoint, "").Replace("../../../", "");
@@ -145,10 +147,24 @@ namespace UnrealReZen.Core
                 mmf.Dispose();
             }
 
+            // Add a line feed for the progress bar
+            Console.WriteLine("");
+
             // Note: FF7R2 crashes when it succeed in reading the dummy manifest file
             //       So, we intentionally break the first byte to let the game ignore it.
             f.Seek(0, 0);
             f.Write([0]);
+        }
+
+        public static void WriteProgressBar(int count, int maxCount)
+        {
+            // Display a progress bar on the console.
+            // e.g. WriteProgressBar(54, 100)
+            //      [##########..........] 54/100
+            const int MaxProgress = 20;
+            var progress = count * MaxProgress / maxCount;
+            string str = new string('#', progress) + new string('.', MaxProgress - progress);
+            Console.Write($"\r[{str}] {count}/{maxCount}");
         }
 
         public static byte[] DeparseDirectoryIndex(List<AssetMetadata> files)
